@@ -1,4 +1,17 @@
 $(function(){
+	
+	
+	// for handling CSRF token
+	var token = $('meta[name="_csrf"]').attr('content');
+	var header = $('meta[name="_csrf_header"]').attr('content');
+	
+	if((token!=undefined && header !=undefined) && (token.length > 0 && header.length > 0)) {		
+		// set the token header for the ajax request
+		$(document).ajaxSend(function(e, xhr, options) {			
+			xhr.setRequestHeader(header,token);			
+		});				
+	}
+	
 	//solving the active menu problem
 	
 	switch(menu){
@@ -13,6 +26,9 @@ $(function(){
 			break;
 		case 'Product Management':
 			$('#manageProduct').addClass('active');
+			break;
+		case 'User Cart':
+			$('#userCart').addClass('active');
 			break;
 		default:
 			if(menu == 'Home') break;
@@ -82,14 +98,15 @@ $(function(){
 						var str = '';
 						str += '<a href="' + window.contextRoot + '/show/' + data + '/product" class="btn btn-primary"><i class="glyphicon glyphicon-eye-open"></i></a> &#160;';
 						
-						if (row.quantity < 1) {
-							str += '<a href="javascript:void(0)" class="btn btn-success disabled"><span class="glyphicon glyphicon-shopping-cart"></span></a>';
-						} else {
-
-							str += '<a href="'+ window.contextRoot + '/cart/add/' + data
-									+ '/product" class="btn btn-success"><span class="glyphicon glyphicon-shopping-cart"></span></a>';
+						if(userRole == 'ADMIN'){
+							str += '<a href="'+ window.contextRoot + '/manage/' + data + '/product" class="btn btn-success"><span class="glyphicon glyphicon-shopping-cart"></span></a>';
+						}else{
+							if (row.quantity < 1) {
+								str += '<a href="javascript:void(0)" class="btn btn-success disabled"><span class="glyphicon glyphicon-shopping-cart"></span></a>';
+							} else {
+									str += '<a href="'+ window.contextRoot + '/cart/add/' + data + '/product" class="btn btn-success"><span class="glyphicon glyphicon-shopping-cart"></span></a>';
+							}	
 						}
-						
 						return str;
 					}
 				}
@@ -230,10 +247,109 @@ $(function(){
 			}
 		})
 	}
+
 	
-	
-	
-	
-	
+	// validating the product form element	
+	// fetch the form element
+	$categoryForm = $('#categoryForm');
+		
+		if($categoryForm.length) {
+			
+			$categoryForm.validate({			
+					rules: {
+						name: {
+							required: true,
+							minlength: 3
+						},
+						description: {
+							required: true,
+							minlength: 3					
+						}				
+					},
+					messages: {					
+						name: {
+							required: 'Please enter product name!',
+							minlength: 'Please enter atleast five characters'
+						},
+						description: {
+							required: 'Please enter product name!',
+							minlength: 'Please enter atleast five characters'
+						}					
+					},
+					errorElement : "em",
+					errorPlacement : function(error, element) {
+						error.addClass('help-block');
+						error.insertAfter(element);
+					}				
+				}
+			);
+		}
+		
+		/*validating the loginform*/
+		
+		// validating the product form element	
+		// fetch the form element
+		$loginForm = $('#loginForm');
+		
+		if($loginForm.length) {
+			
+			$loginForm.validate({			
+					rules: {
+						username: {
+							required: true,
+							email: true
+							
+						},
+						password: {
+							required: true
+						}				
+					},
+					messages: {					
+						username: {
+							required: 'Please enter your email!',
+							email: 'Please enter a valid email address!'
+						},
+						password: {
+							required: 'Please enter your password!'
+						}					
+					},
+					errorElement : "em",
+					errorPlacement : function(error, element) {
+						// Add the 'help-block' class to the error element
+						error.addClass("help-block");
+						
+						// add the error label after the input element
+						error.insertAfter(element);
+					}				
+				}
+			
+			);
+		}
+		
+		/*------*/
+		/* handle refresh cart*/	
+		$('button[name="refreshCart"]').click(function(){
+			var cartLineId = $(this).attr('value');
+			var countField = $('#count_' + cartLineId);
+			var originalCount = countField.attr('value');
+			// do the checking only the count has changed
+			if(countField.val() !== originalCount) {	
+				// check if the quantity is within the specified range
+				if(countField.val() < 1 || countField.val() > 3) {
+					// set the field back to the original field
+					countField.val(originalCount);
+					bootbox.alert({
+						size: 'medium',
+				    	title: 'Error',
+				    	message: 'Product Count should be minimum 1 and maximum 3!'
+					});
+				}
+				else {
+					// use the window.location.href property to send the request to the server
+					var updateUrl = window.contextRoot + '/cart/' + cartLineId + '/update?count=' + countField.val();
+					window.location.href = updateUrl;
+				}
+			}
+		});			
 	
 });

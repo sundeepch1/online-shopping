@@ -44,7 +44,7 @@ public class ManagementController {
 		ModelAndView mv = new ModelAndView("page");	
 		
 		mv.addObject("title","Product Management");		
-		mv.addObject("userClickManageProduct",true);
+		mv.addObject("userClickManageProducts",true);
 		
 		Product nProduct = new Product();
 		
@@ -57,9 +57,50 @@ public class ManagementController {
 		
 		if(operation != null) {
 			if(operation.equals("product")) {
-				mv.addObject("message", "Product Submitted Successfully");
+				mv.addObject("message", "Product Submitted Successfully.");
 			}
+			else if(operation.equals("category"));
+				mv.addObject("message", "Category Submitted Successfully.");
 		}
+		
+		return mv;
+	}
+	
+	@RequestMapping(value="/products/category", method=RequestMethod.GET)
+	public ModelAndView showManageCategory() {
+		
+		ModelAndView mv = new ModelAndView("page");	
+		
+		mv.addObject("title","Product Management");		
+		mv.addObject("userClickManageCategory",true);
+		
+		Category category = new Category();
+		mv.addObject("category", category);
+		
+		return mv;
+	}
+	
+	@RequestMapping(value="/category", method=RequestMethod.POST)
+	public String handleCategorySubmission(@ModelAttribute Category category) {
+		
+		categoryDAO.add(category);
+		
+		return "redirect:/manage/products?operation=category";
+	}
+	
+	@RequestMapping(value="/{id}/product", method=RequestMethod.GET)
+	public ModelAndView showEditProduct(@PathVariable int id) {
+		ModelAndView mv = new ModelAndView("page");	
+		
+		mv.addObject("userClickManageProducts",true);
+		mv.addObject("title","Product Management");	
+		
+		
+		//fetch the product from the database
+		Product nProduct = productDAO.get(id);
+		
+		//set the product fetch from database
+		mv.addObject("product", nProduct);
 		
 		return mv;
 	}
@@ -83,12 +124,15 @@ public class ManagementController {
 		if(results.hasErrors()) {
 			model.addAttribute("message", "Validation fails for adding the product!");
 			model.addAttribute("title","Product Management");		
-			model.addAttribute("userClickManageProduct",true);
+			model.addAttribute("userClickManageProducts",true);
 			return "page";
 		}			
 
-		//create a new record
-		productDAO.add(mProduct);
+		if(mProduct.getId() == 0) {
+			productDAO.add(mProduct);
+		}else {
+			productDAO.update(mProduct);
+		}
 		
 		 //upload the file
 		 if(!mProduct.getFile().getOriginalFilename().equals("") ){

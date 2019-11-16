@@ -90,8 +90,18 @@
 			</c:if>		
 			
 			<!-- Load only when user clicks manage product -->
-			<c:if test="${userClickManageProduct == true}">
+			<c:if test="${userClickManageProducts == true}">
 				<%@include file="manageProducts.jsp"%>
+			</c:if>	
+			
+			<!-- Load only when user clicks category -->
+			<c:if test="${userClickManageCategory == true}">
+				<%@include file="category.jsp"%>
+			</c:if>	
+			
+			<!-- Load only when user clicks cart -->
+			<c:if test="${userClickShowCart == true}">
+				<%@include file="cart.jsp"%>
 			</c:if>							
 
 		</div>
@@ -102,6 +112,9 @@
 
 		<!-- jQuery -->
 		<script src="${js}/jquery.js"></script>
+		
+		<!-- jQuery Validator -->
+		<script src="${js}/jquery.validate.js"></script>
 
 		<!-- Bootstrap Core JavaScript -->
 		<script src="${js}/bootstrap.min.js"></script>

@@ -70,6 +70,9 @@
 						<div class="form-group">
 							<div class="col-md-offset-4 col-md-8" >
 								<input type="submit" name="submit" id="submit" class="btn btn-primary" value="Submit" />
+								<c:if test="${product.id == 0}">
+									<a href="${contextRoot}/manage/products/category" class="btn btn-warning pull-right">Add Category</a>
+								</c:if>
 								<sf:hidden path="id"/>
 								<sf:hidden path="code"/>
 								<sf:hidden path="supplierId"/>
@@ -83,7 +86,7 @@
 			</div>
 		</div>
 	</div>
-
+	
 	<div class=row>
 		<div class="col-xs-12">
 			<h1>Available Products</h1>
@@ -92,35 +95,36 @@
 	</div>
 	<div class="row">
 		<div class='col-xs-12'>
-			<div style="overflow:auto">
-				<table id="adminProductsTable" class="table table-condensed table-bordered">
-					<thead>					
-						<tr>					
-							<th>Id</th>
-							<th>&#160;</th>
-							<th>Name</th>
-							<th>Brand</th>
-							<th>Quantity</th>
-							<th>Unit Price</th>
-							<th>Activate</th>				
-							<th>Edit</th>
-						</tr>					
-					</thead>
-					<tfoot>
-						<tr>					
-							<th>Id</th>
-							<th>&#160;</th>
-							<th>Name</th>
-							<th>Brand</th>
-							<th>Quantity</th>
-							<th>Unit Price</th>
-							<th>Activate</th>				
-							<th>Edit</th>
-						</tr>									
-					</tfoot>
-				</table>
+			<div class="container-fluid">
+				<div class="table-responsive">
+					<table id="adminProductsTable" class="table table-condensed table-bordered">
+						<thead>					
+							<tr>					
+								<th>Id</th>
+								<th>&#160;</th>
+								<th>Name</th>
+								<th>Brand</th>
+								<th>Quantity</th>
+								<th>Unit Price</th>
+								<th>Activate</th>				
+								<th>Edit</th>
+							</tr>					
+						</thead>
+						<tfoot>
+							<tr>					
+								<th>Id</th>
+								<th>&#160;</th>
+								<th>Name</th>
+								<th>Brand</th>
+								<th>Quantity</th>
+								<th>Unit Price</th>
+								<th>Activate</th>				
+								<th>Edit</th>
+							</tr>									
+						</tfoot>
+					</table>
+				</div>
 			</div>
 		</div>
 	</div>
-
 </div>

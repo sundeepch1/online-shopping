@@ -13,7 +13,7 @@ CREATE TABLE user_detail (
 	last_name VARCHAR(50),
 	role VARCHAR(50),
 	enabled BOOLEAN,
-	password VARCHAR(60),
+	password VARCHAR(200),
 	email VARCHAR(100),
 	contact_number VARCHAR(15),	
 	PRIMARY KEY(id)
@@ -35,6 +35,45 @@ CREATE TABLE product (
 	PRIMARY KEY (id),
  	CONSTRAINT fk_product_category_id FOREIGN KEY (category_id) REFERENCES category(id),
 	CONSTRAINT fk_product_supplier_id FOREIGN KEY (supplier_id) REFERENCES user_detail(id)
+);
+
+-- the address table to store the user billing and shipping addresses
+CREATE TABLE address (
+	id INT AUTO_INCREMENT,
+	user_id int,
+	address_line_one VARCHAR(100),
+	address_line_two VARCHAR(100),
+	city VARCHAR(20),
+	state VARCHAR(20),
+	country VARCHAR(20),
+	postal_code VARCHAR(10),
+	is_billing BOOLEAN,
+	is_shipping BOOLEAN,
+	CONSTRAINT fk_address_user_id FOREIGN KEY (user_id ) REFERENCES user_detail (id),
+	CONSTRAINT pk_address_id PRIMARY KEY (id)
+);
+
+-- the cart table to store the user cart top-level details
+CREATE TABLE cart (
+	id INT AUTO_INCREMENT,
+	user_id int,
+	grand_total DECIMAL(10,2),
+	cart_lines int,
+	CONSTRAINT fk_cart_user_id FOREIGN KEY (user_id ) REFERENCES user_detail (id),
+	CONSTRAINT pk_cart_id PRIMARY KEY (id)
+);
+
+CREATE TABLE cart_line (
+	id INT AUTO_INCREMENT,
+	cart_id int,
+	total DECIMAL(10,2),
+	product_id int,
+	product_count int,
+	buying_price DECIMAL(10,2),
+	is_available boolean,
+	CONSTRAINT fk_cartline_cart_id FOREIGN KEY (cart_id ) REFERENCES cart (id),
+	CONSTRAINT fk_cartline_product_id FOREIGN KEY (product_id ) REFERENCES product (id),
+	CONSTRAINT pk_cartline_id PRIMARY KEY (id)
 );
 
 INSERT INTO category (name, description,image_url,is_active) VALUES ('Laptop', 'This is description for Laptop category!', 'CAT_1.png', true);
